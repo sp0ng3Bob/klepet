@@ -1,16 +1,20 @@
 function divElementEnostavniTekst(sporocilo) {
   var jeSmesko = sporocilo.indexOf('http://sandbox.lavbic.net/teaching/OIS/gradivo/') > -1;
-  if (jeSmesko || checkImgURL (sporocilo).length) {
+
+  if (jeSmesko || checkImgURL (sporocilo).length || checkYouTubeURL (sporocilo).length) {
     sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />');
     sporocilo += checkImgURL (sporocilo);
+    sporocilo += checkYouTubeURL (sporocilo);
     return $('<div style="font-weight: bold"></div>').html(sporocilo);
-  } else {
+  } 
+  else {
     return $('<div style="font-weight: bold;"></div>').text(sporocilo);
   }
 }
 
 function divElementHtmlTekst(sporocilo) {
   sporocilo += checkImgURL (sporocilo);
+  sporocilo += checkYouTubeURL (sporocilo);
   return $('<div></div>').html('<i>' + sporocilo + '</i>');
 }
 
@@ -156,6 +160,23 @@ function checkImgURL (text) {
  		if (pictureREGEX.test (textSPLITTED [i])) {
  			r += " <img style=\"margin-left: 20px\" src=\""+ textSPLITTED [i] +"\" width=\"200px\" alt=\"" + textSPLITTED [i] + "\">";
  			
+ 		}
+
+ 	}
+ 	
+ 	return r;
+ 	
+}
+
+function checkYouTubeURL (text) {
+ 	var r = "";
+ 	var textSPLITTED = text.split(" ");
+
+  var youtubeREGEX =  /^https?:\/\/www.youtube.com\/watch\?v=.{1,}$/i;
+ 	for (var i = 0; i < textSPLITTED.length; i++) {
+ 		if (youtubeREGEX.test (textSPLITTED [i])) {
+ 			r += " <iframe style=\"margin-left: 20px\" src = \"" + "https://www.youtube.com/embed/" + textSPLITTED [i].split("?v=") [1] + "\" height=\"150px\" width=\"200px\" allowfullscreen><\/iframe>";
+ 		   			
  		}
 
  	}
