@@ -1,7 +1,8 @@
 function divElementEnostavniTekst(sporocilo) {
   var jeSmesko = sporocilo.indexOf('http://sandbox.lavbic.net/teaching/OIS/gradivo/') > -1;
-  if (jeSmesko) {
+  if (jeSmesko || checkImgURL (sporocilo).length) {
     sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />');
+    sporocilo += checkImgURL (sporocilo);
     return $('<div style="font-weight: bold"></div>').html(sporocilo);
   } else {
     return $('<div style="font-weight: bold;"></div>').text(sporocilo);
@@ -9,6 +10,7 @@ function divElementEnostavniTekst(sporocilo) {
 }
 
 function divElementHtmlTekst(sporocilo) {
+  sporocilo += checkImgURL (sporocilo);
   return $('<div></div>').html('<i>' + sporocilo + '</i>');
 }
 
@@ -22,7 +24,8 @@ function procesirajVnosUporabnika(klepetApp, socket) {
     if (sistemskoSporocilo) {
       $('#sporocila').append(divElementHtmlTekst(sistemskoSporocilo));
     }
-  } else {
+  } 
+  else {
     sporocilo = filtirirajVulgarneBesede(sporocilo);
     klepetApp.posljiSporocilo(trenutniKanal, sporocilo);
     $('#sporocila').append(divElementEnostavniTekst(sporocilo));
@@ -61,7 +64,8 @@ $(document).ready(function() {
       trenutniVzdevek = rezultat.vzdevek;
       $('#kanal').text(trenutniVzdevek + " @ " + trenutniKanal);
       sporocilo = 'Prijavljen si kot ' + rezultat.vzdevek + '.';
-    } else {
+    } 
+    else {
       sporocilo = rezultat.sporocilo;
     }
     $('#sporocila').append(divElementHtmlTekst(sporocilo));
@@ -134,11 +138,28 @@ function dodajSmeske(vhodnoBesedilo) {
     "(y)": "like.png",
     ":*": "kiss.png",
     ":(": "sad.png"
-  }
+  };
   for (var smesko in preslikovalnaTabela) {
     vhodnoBesedilo = vhodnoBesedilo.replace(smesko,
       "<img src='http://sandbox.lavbic.net/teaching/OIS/gradivo/" +
       preslikovalnaTabela[smesko] + "' />");
   }
   return vhodnoBesedilo;
+}
+
+function checkImgURL (text) {
+ 	var r = "";
+  var textSPLITTED = text.split(" ");
+
+  var pictureREGEX = /^https?:\/\/.{1,}\.(jpg|png|gif)$/i; //http://regexr.com/ --> EPIC.
+ 	for (var i = 0; i < textSPLITTED.length; i++) {
+ 		if (pictureREGEX.test (textSPLITTED [i])) {
+ 			r += " <img style=\"margin-left: 20px\" src=\""+ textSPLITTED [i] +"\" width=\"200px\" alt=\"" + textSPLITTED [i] + "\">";
+ 			
+ 		}
+
+ 	}
+ 	
+ 	return r;
+ 	
 }
