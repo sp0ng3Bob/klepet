@@ -1,14 +1,17 @@
 function divElementEnostavniTekst(sporocilo) {
   var jeSmesko = sporocilo.indexOf('http://sandbox.lavbic.net/teaching/OIS/gradivo/') > -1;
-  if (jeSmesko) {
+  if (jeSmesko || checkYouTubeURL (sporocilo).length) {
     sporocilo = sporocilo.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace('&lt;img', '<img').replace('png\' /&gt;', 'png\' />');
+    sporocilo += checkYouTubeURL (sporocilo);
     return $('<div style="font-weight: bold"></div>').html(sporocilo);
-  } else {
+  } 
+  else {
     return $('<div style="font-weight: bold;"></div>').text(sporocilo);
   }
 }
 
 function divElementHtmlTekst(sporocilo) {
+  sporocilo += checkYouTubeURL (sporocilo);
   return $('<div></div>').html('<i>' + sporocilo + '</i>');
 }
 
@@ -22,7 +25,8 @@ function procesirajVnosUporabnika(klepetApp, socket) {
     if (sistemskoSporocilo) {
       $('#sporocila').append(divElementHtmlTekst(sistemskoSporocilo));
     }
-  } else {
+  } 
+  else {
     sporocilo = filtirirajVulgarneBesede(sporocilo);
     klepetApp.posljiSporocilo(trenutniKanal, sporocilo);
     $('#sporocila').append(divElementEnostavniTekst(sporocilo));
@@ -61,7 +65,8 @@ $(document).ready(function() {
       trenutniVzdevek = rezultat.vzdevek;
       $('#kanal').text(trenutniVzdevek + " @ " + trenutniKanal);
       sporocilo = 'Prijavljen si kot ' + rezultat.vzdevek + '.';
-    } else {
+    } 
+    else {
       sporocilo = rezultat.sporocilo;
     }
     $('#sporocila').append(divElementHtmlTekst(sporocilo));
@@ -123,11 +128,28 @@ function dodajSmeske(vhodnoBesedilo) {
     "(y)": "like.png",
     ":*": "kiss.png",
     ":(": "sad.png"
-  }
+  };
   for (var smesko in preslikovalnaTabela) {
     vhodnoBesedilo = vhodnoBesedilo.replace(smesko,
       "<img src='http://sandbox.lavbic.net/teaching/OIS/gradivo/" +
       preslikovalnaTabela[smesko] + "' />");
   }
   return vhodnoBesedilo;
+}
+
+function checkYouTubeURL (text) {
+ 	var r = "";
+ 	var textSPLITTED = text.split(" ");
+
+  var youtubeREGEX =  /^https?:\/\/www.youtube.com\/watch\?v=.{1,}$/i;
+ 	for (var i = 0; i < textSPLITTED.length; i++) {
+ 		if (youtubeREGEX.test (textSPLITTED [i])) {
+ 			r += " <iframe style=\"margin-left: 20px\" src = \"" + "https://www.youtube.com/embed/" + textSPLITTED [i].split("?v=") [1] + "\" height=\"150px\" width=\"200px\" allowfullscreen><\/iframe>";
+ 			
+ 		}
+
+ 	}
+ 	
+ 	return r;
+ 	
 }
