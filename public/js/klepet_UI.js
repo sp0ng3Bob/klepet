@@ -119,6 +119,18 @@ $(document).ready(function() {
       message.val('/zasebno "' + name + '"');
     });
   });
+  
+  socket.on('dregljaj', function () {
+    //var source = "";
+    //$("#sporocila").append (divElementEnostavniTekst('(Dregljaj prihaja od ' + source + ')'));
+    
+    $('#vsebina').jrumble ();
+    $('#vsebina').trigger ('startRumble');
+    setTimeout(function(){
+      $('#vsebina').trigger ('stopRumble');
+    } ,1500);
+    
+  });
 
   setInterval(function() {
     socket.emit('kanali');
