@@ -96,9 +96,20 @@ $(document).ready(function() {
 
   socket.on('uporabniki', function(uporabniki) {
     $('#seznam-uporabnikov').empty();
+    
     for (var i=0; i < uporabniki.length; i++) {
       $('#seznam-uporabnikov').append(divElementEnostavniTekst(uporabniki[i]));
     }
+ 
+    $('#seznam-uporabnikov div').click(function() {
+      console.log("Klik na uporabnika!");
+      
+      var message = $('#poslji-sporocilo');
+      var name = $(this).text();
+      
+      message.focus();
+      message.val('/zasebno "' + name + '"');
+    });
   });
 
   setInterval(function() {
